@@ -1,0 +1,33 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Helm Package
+        run: |
+          git status
+          helm package ../harbor-helm
+          ls
+          pwd
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: |
+      #       ${{ env.OFFLINE_PACKAGE_PATH }}
+      #       ${{ env.OFFLINE_PACKAGE_PATH }}.asc
+      #       ${{ env.MD5SUM_PATH }}
